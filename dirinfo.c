@@ -4,7 +4,6 @@
 #include <strings.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <time.h>
 
 void specify_files (char path[100]){
   DIR * d;
