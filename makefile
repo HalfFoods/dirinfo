@@ -1,8 +1,5 @@
-all: dirinfo.o
-	gcc -o program dirinfo.o
-
-stat.o: dirinfo.c
-	gcc -c dirinfo.c
+all: dirinfo.c
+	gcc -o program dirinfo.c
 
 run:
 	./program
