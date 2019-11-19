@@ -5,10 +5,25 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-void specify_files (char path[100]){
+int main(int argc, char *argv[]){
+  char name[100];
+
+  if (argc <= 1){
+    printf("Enter directory to scan: ");
+    fgets(name, 100, stdin);
+    name[strlen(name)-1] = '\0';
+  }
+  else{
+    strcpy(name, argv[1]);
+  }
+
+  printf("Statistics for directory: %s\n", name);
   DIR * d;
   struct dirent * f;
-  if ((d = opendir(path)) != NULL){
+  int size = 0;
+  char p[100];
+  struct stat b;
+  if ((d = opendir(name)) != NULL){
     printf("Directories:\n");
     while ((f = readdir(d)) != NULL){
       if (f->d_type == 4){
@@ -17,10 +32,15 @@ void specify_files (char path[100]){
     }
     printf("Regular files:\n");
     closedir(d);
-    d = opendir(path);
+    d = opendir(name);
     while ((f = readdir(d)) != NULL){
       if (f->d_type == 8){
         printf("\t%s\n", f->d_name);
+        strcpy(p, name);
+        strcat(p, "/");
+        strcat(p, f->d_name);
+        stat(p, &b);
+        size += b.st_size;
       }
     }
     closedir(d);
@@ -28,46 +48,7 @@ void specify_files (char path[100]){
   else{
     printf("Error %d: %s\n", errno, strerror(errno));
   }
-}
 
-int dir_size(char path[100]){
-  int ans = 0;
-  DIR * d;
-  struct dirent * f;
-  char p[100];
-  struct stat b;
-  if ((d = opendir(path)) != NULL){
-    while ((f = readdir(d)) != NULL){
-      if (f->d_type == 8){
-        // Finds path of regular files
-        strcpy(p, path);
-        strcat(p, "/");
-        strcat(p, f->d_name);
-        stat(p, &b);
-        ans += b.st_size;
-      }
-    }
-    return ans;
-  }
-  else{
-    printf("Error %d: %s\n", errno, strerror(errno));
-    return -1;
-  }
-}
-
-int main(int argc, char *argv[]){
-  char * d = malloc(100);
-
-  if (argc <= 1){
-    printf("Enter directory to scan: ");
-    fgets(d, 100, stdin);
-    d[strlen(d)-1] = 0; // ending
-  }
-  else{
-    d = argv[1];
-  }
-  printf("Statistics for directory: %s\n", d);
-  printf("Total Directory Size: %d\n", dir_size(d));
-  specify_files(".");
+  printf("Total Directory Size: %d\n", size);
   return 0;
 }
