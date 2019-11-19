@@ -55,9 +55,19 @@ int dir_size(char path[100]){
   }
 }
 
-int main(){
-  printf("Statistics for directory: .\n");
-  printf("Total Directory Size: %d\n", dir_size("."));
+int main(int argc, char *argv[]){
+  char * d = malloc(100);
+
+  if (argc <= 1){
+    printf("Enter directory to scan: ");
+    fgets(d, 100, stdin);
+    d[strlen(d)-1] = 0; // ending
+  }
+  else{
+    d = argv[1];
+  }
+  printf("Statistics for directory: %s\n", d);
+  printf("Total Directory Size: %d\n", dir_size(d));
   specify_files(".");
   return 0;
 }
